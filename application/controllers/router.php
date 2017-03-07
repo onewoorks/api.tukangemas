@@ -55,8 +55,7 @@ if (file_exists($target)) {
     include_once($target);
     $class = ucfirst($page) . '_Controller';
     class_exists($class) ? $controller = new $class : die('class does not exist!');
-    
-    $controller->main($getVars, $params);
+    $controller->main($getVars, $params, $request);
     
 } else {
     die($page . ' page does not exist!');

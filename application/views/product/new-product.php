@@ -4,11 +4,18 @@
 </div>
 
 <ol class='breadcrumb'>
-    <li><a href='./'>Home</a></li>
+    <li><a href='<?= SITE_ROOT;?>product/check-in'>Home</a></li>
     <li class='active'>New Product</li>
 </ol>
 
-<table class='table table-bordered'>
+<div class='row'>
+    <div class='col-sm-12 text-right'>
+        <div class='btn btn-primary' id='btnTransfer'>Transfer</div>
+    </div>
+</div>
+<br>
+
+<table class='table table-bordered table-condensed'>
     <thead>
         <tr>
             <th>No</th>
@@ -18,6 +25,7 @@
             <th class='text-center'>Normal Labour (RM)</th>
             <th class='text-center'>Member Labour (RM)</th>
             <th class='text-center'>Dealer Labour (RM)</th>
+            <th class='text-center'>Harga</th>
         </tr>
     </thead>
     <tbody>
@@ -30,9 +38,17 @@
             <td class='text-center'><?= $np['upah_normal'];?></td>
             <td class='text-center'><?= $np['upah_member'];?></td>
             <td class='text-center'><?= $np['upah_dealer'];?></td>
+            <td class='text-center'><?= $np['harga'];?></td>
         </tr>
         <?php endforeach;?>
     </tbody>
 </table>
-
+<script>
+    $(function(){
+        $('#btnTransfer').on('click',function(){
+            var url = window.location.href;
+            window.location = url+'/export';
+        });
+    });
+    </script>
 <?= $footer;?>

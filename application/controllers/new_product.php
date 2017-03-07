@@ -37,6 +37,9 @@ class New_Product_Controller {
         foreach ($listNoSiri[$option] as $nosiri):
             $product->noSiri = $nosiri;
             $productInfo = $product->ReadStokByNoSiri();
+//            echo '<pre>';
+//            print_r($productInfo);
+//            echo '</pre>';
             $upah = $productController->UpahBarangEmas($productInfo['Upah'], $productInfo['Upah_Jualan']);
             $listProduct[] = array(
                 'no_siri_Produk' => $productInfo['no_siri_Produk'],
@@ -44,7 +47,8 @@ class New_Product_Controller {
                 'upah_modal' => Format::Currency($upah['modal']),
                 'upah_normal' => Format::Currency($upah['normal']),
                 'upah_member' => Format::Currency($upah['member']),
-                'upah_dealer' => Format::Currency($upah['dealer'])
+                'upah_dealer' => Format::Currency($upah['dealer']),
+                'harga' => ($productInfo['Harga_item']) ? Format::Currency($productInfo['Harga_item']) : ''
             );
         endforeach;
         return $listProduct;

@@ -16,7 +16,8 @@ class Product_Controller extends Common_Controller {
     private $productToSync = array();
     private $newProduct = array();
 
-    public function main(array $getVars, array $params = null) {
+    public function main(array $getVars, array $params = null, $request = null) {
+        print_r($request);
         $product = new Product_Model();
         $case = $params[URL_ARRAY + 1];
         $result = array();
@@ -35,10 +36,12 @@ class Product_Controller extends Common_Controller {
                 $result = $this->CheckIn();
                 break;
             case 'new-product':
-                $category = str_replace('-',' ',$params[URL_ARRAY+2]);
-                $page = 'new-product';
+                $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
+                $vars = $this->CheckExtraParams(URL_ARRAY+3, $params);
+                $newProduct = $this->NewProduct($category, $vars); 
+                $page = $newProduct['page'];
                 $result['category_name'] = ucwords($category);
-                $result['result'] = New_Product_Controller::Route($category);
+                $result['result'] = $newProduct['data'];
                 break;
             case 'sync':
                 $ajax = true;
@@ -372,7 +375,7 @@ class Product_Controller extends Common_Controller {
 
         if ($modalUpah >= 0 and $modalUpah <= 30):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 15;
+            $dealer = $modalUpah + ($member > 0) ? 15 : 0;
         elseif ($modalUpah > 30 and $modalUpah <= 60):
             $member = $upahJualan - (($upahJualan * 25) / 100);
             $dealer = $modalUpah + 25;
@@ -432,14 +435,14 @@ class Product_Controller extends Common_Controller {
      * @param type $dulangNo
      * @return type
      */
-    public static function DulangTukangEmas($dulangNo,$object = false) {
+    public static function DulangTukangEmas($dulangNo, $object = false) {
         $modelProduct = new Product_Model();
         return $modelProduct->ReadAllProductByDulangTukangEmas($dulangNo, $object);
     }
 
     public static function DulangEqual($dulangSankyu, $dulangTE, $berat = false) {
         $modelProduct = new Product_Model();
-        $sankyuItem = $modelProduct->ReadAllProductByDulang($dulangSankyu,true,$berat);
+        $sankyuItem = $modelProduct->ReadAllProductByDulang($dulangSankyu, true, $berat);
         $sankyu = array();
         foreach ($sankyuItem as $si):
             $sankyu[] = $si['no_siri_Produk'];
@@ -452,6 +455,30 @@ class Product_Controller extends Common_Controller {
 
         $result = self::CompareDulangResult($sankyu, $tukangemas);
         return $result;
+    }
+
+    private function NewProduct($category, $vars = null) {
+        $result = false;
+        $varsCase = ($vars) ? $vars[0] : false;
+        
+        switch ($varsCase):
+            case 'export':
+                $result['page'] = 'product/new-product-export';
+                $result['data'] = array();
+                break;
+            default :
+                $result['page'] = 'product/new-product';
+                $result['data'] = New_Product_Controller::Route($category);
+        endswitch;
+        return $result;
+    }
+    
+    private function CheckExtraParams($startArray,$paramList){
+        $vars = array();
+        for($i=$startArray;$i<count($paramList);$i++):
+            $vars[] = $paramList[$i];
+        endfor;
+        return $vars;
     }
 
 }

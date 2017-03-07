@@ -15,6 +15,14 @@ class Common_Controller {
         $result = substr($noSiri, $prefixLen);
         return $result;
     }
+    
+    public function MainCategoryByDulang($dulangId){
+        $common = new Common_Model();
+        $basicCategory = $common->basicCategory;
+        foreach($basicCategory as $category):
+            
+        endforeach;
+    }
 
     public function DefineMainCategory($categoryId, $dulang = null) {
         $teMap = false;
