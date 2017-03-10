@@ -464,7 +464,7 @@ class Product_Controller extends Common_Controller {
         switch ($varsCase):
             case 'export':
                 $result['page'] = 'product/new-product-export';
-                $result['data'] = array();
+                $result['data'] = New_Product_Controller::Route($category,true);
                 break;
             default :
                 $result['page'] = 'product/new-product';

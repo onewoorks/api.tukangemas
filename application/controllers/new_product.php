@@ -2,12 +2,12 @@
 
 class New_Product_Controller {
 
-    public static function Route($category) {
-        $detail = self::SubCategory($category);
+    public static function Route($category, $detailInfo = false) {
+        $detail = self::SubCategory($category, $detailInfo);
         return $detail;
     }
 
-    private static function SubCategory($category) {
+    private static function SubCategory($category, $detailInfo) {
         $commonModel = new Common_Model();
         $categoryDetail = $commonModel->basicCategory;
         $detail = array();
@@ -16,10 +16,10 @@ class New_Product_Controller {
                 $detail[$key] = $c;
             endforeach;
         endforeach;
-        return self::DulangCompare($detail[$category]['sankyu'], $detail[$category]['tukangemas']);
+        return self::DulangCompare($detail[$category]['sankyu'], $detail[$category]['tukangemas'], $detailInfo);
     }
 
-    private static function DulangCompare($sk, $te, $option = 'new_product') {
+    private static function DulangCompare($sk, $te, $detailInfo = false, $option = 'new_product') {
         $sankyu = array();
         $tukangemas = array();
         $listSankyu = Product_Controller::DulangSankyu($sk, false, true);
@@ -37,21 +37,60 @@ class New_Product_Controller {
         foreach ($listNoSiri[$option] as $nosiri):
             $product->noSiri = $nosiri;
             $productInfo = $product->ReadStokByNoSiri();
-//            echo '<pre>';
-//            print_r($productInfo);
-//            echo '</pre>';
             $upah = $productController->UpahBarangEmas($productInfo['Upah'], $productInfo['Upah_Jualan']);
-            $listProduct[] = array(
-                'no_siri_Produk' => $productInfo['no_siri_Produk'],
-                'berat' => Format::Weight($productInfo['Berat']),
-                'upah_modal' => Format::Currency($upah['modal']),
-                'upah_normal' => Format::Currency($upah['normal']),
-                'upah_member' => Format::Currency($upah['member']),
-                'upah_dealer' => Format::Currency($upah['dealer']),
-                'harga' => ($productInfo['Harga_item']) ? Format::Currency($productInfo['Harga_item']) : ''
-            );
+            $productInfo['upah'] = $upah;
+            if (!$detailInfo):
+                $listProduct[] = array(
+                    'no_siri_Produk' => $productInfo['no_siri_Produk'],
+                    'berat' => Format::Weight($productInfo['Berat']),
+                    'upah_modal' => Format::Currency($upah['modal']),
+                    'upah_normal' => Format::Currency($upah['normal']),
+                    'upah_member' => Format::Currency($upah['member']),
+                    'upah_dealer' => Format::Currency($upah['dealer']),
+                    'harga' => ($productInfo['Harga_item']) ? Format::Currency($productInfo['Harga_item']) : ''
+                );
+            else:
+                $productInfo['category'] = $te;
+                $listProduct[] = self::DetailProductInfo($productInfo);
+            endif;
         endforeach;
         return $listProduct;
+    }
+    
+    private static function DetailProductInfo(array $productInfo){
+        $result = array(
+                    'model' => $productInfo['no_siri_Produk'],
+                    'sku' => $productInfo['Dulang'],
+                    'ean' => (!$productInfo['Berat'] == '') ? json_encode($productInfo['upah']) : 0,
+                    'isbn' => $productInfo['kod_Kategori_Produk'],
+                    'jan' => ($productInfo['Berat'] > 0) ? 1 : 0,
+                    'mpn' => $productInfo['category'],
+                    'location' => $productInfo['kod_purity'],
+                    'quantity' => 1,
+                    'stock_status_id' => 5,
+                    'image' => 'catalog/product_online/' . $productInfo['no_siri_Produk'] . '.jpg',
+                    'manufacturer_id' => $productInfo['Supplier_ID'],
+                    'shipping' => 1,
+                    'price' => ($productInfo['Berat'] > 0) ? 0 : $productInfo['Harga_item'],
+                    'points' => 0,
+                    'tax_class_id' => 0,
+                    'date_available' => date('Y-m-d'),
+                    'weight' => $productInfo['Berat'],
+                    'weight_class_id' => 2,
+                    'length' => $productInfo['dimension_Panjang'],
+                    'width' => $productInfo['dimension_Lebar'],
+                    'height' => $productInfo['dimension_Dia'],
+                    'length_class_id' => 2,
+                    'substract' => 1,
+                    'minimum' => 1,
+                    'sort_order' => 1,
+                    'status' => 1,
+                    'viewed' => 0,
+                    'date_added' => date('Y-m-d h:i:s'),
+                    'date_modified' => date('Y-m-d h:i:s'),
+                    'user_id' => 1,
+                    'ring_size' => $productInfo['dimension_Panjang']);
+        return $result;
     }
 
 }
