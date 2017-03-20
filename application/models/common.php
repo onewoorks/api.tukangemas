@@ -12,7 +12,8 @@ class Common_Model {
     public $basicCategory = array(
         'biasa' => array(
             'subang emas'   => array('sankyu' => 5, 'tukangemas' => 98),
-            'loket emas'    => array('sankyu' => 7, 'tukangemas' => 105)
+            'loket emas'    => array('sankyu' => 7, 'tukangemas' => 105),
+            'choker'        => array('sankyu' => 15,'tukangemas' => 110)
         ),
         'rantai' => array(
             'rantai kaki'   => array('sankyu' => 4, 'tukangemas' => 97),

@@ -89,6 +89,8 @@ class New_Product_Controller {
                     'date_added' => date('Y-m-d h:i:s'),
                     'date_modified' => date('Y-m-d h:i:s'),
                     'user_id' => 1,
+                    'remarks' => $productInfo['remarks'],
+                    'kategori_Produk' => $productInfo['kategori_Produk'],
                     'ring_size' => $productInfo['dimension_Panjang']);
         return $result;
     }

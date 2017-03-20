@@ -9,13 +9,14 @@ $products = array();
 ?>
 <h3>Stock Migration : Sankyu <-> TukangEmas</h3>
 <hr>
-<table class="table table-bordered table-condensed">
+<table id='listCategory' class="table table-bordered table-condensed">
     <thead>
         <tr>
             <th colspan="2"></th>
             <th class="text-center" style='width: 10%'>Sankyu</th>
             <th class="text-center" style='width: 10%'>TE Online</th>
             <th class='text-center' colspan="3">Information</th>
+            <th class='text-center'></th>
 
         </tr>
         <tr>
@@ -26,12 +27,13 @@ $products = array();
             <th class='text-center'>Equal</th>
             <th class='text-center'>New</th>
             <th class='text-center'>Sold</th>
+            <th class='text-center'>Status</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach ($result as $k => $info): ?>
             <?php foreach ($info as $subCat => $dulang): ?>
-                <tr>
+                <tr data-subcategory='<?= str_replace(' ','-',$subCat);?>'>
                     <td><?= strtoupper($k); ?></td>
                     <td><?= strtoupper($subCat); ?></td>
                     <?php if(strtolower($subCat)=='cincin belah rotan' && $dulang['sankyu']==3):?>
@@ -45,6 +47,7 @@ $products = array();
                     <td class='text-center'><?= $productInfo['equal']; $totalEqual += $productInfo['equal']; ?></td>
                     <td class='text-center'><a href='./new-product/<?= str_replace(' ','-',$subCat);?>'><?= $productInfo['new']-$productInfo['sold']; $totalNew += $productInfo['new']-$productInfo['sold']; ?></a></td>
                     <td class='text-center'><?= $productInfo['sold']; $totalSold += $productInfo['sold']; ?></td>
+                    <td class='text-center statusLabel'></td>
                 </tr>
             <?php endforeach;
             ?>
@@ -57,6 +60,7 @@ $products = array();
     <th class='text-center'><?= number_format($totalEqual,0,'',','); ?></th>
     <th class='text-center'><?= number_format($totalNew,0,'',','); ?></th>
     <th class='text-center'><?= number_format($totalSold,0,'',','); ?></th>
+    <th></th>
 </tfoot>
 </table>
 
@@ -68,13 +72,18 @@ $products = array();
 <script>
     $(function () {
         $('#synchronize').click(function () {
-            console.log('processing...');
-            $.ajax({
-                url: 'http://localhost/api.tukangemas/product/sync',
-                success: function (data) {
-                    console.log(data);
-                }
+            $(this).html('processing...');
+            var row = $('#listCategory tbody tr');
+            $.each(row,function(i,v){
+                $.ajax({
+                    url : 'http://localhost/api.tukangemas/product/new-product/'+$(v).data('subcategory')+'/export',
+                    success : function(){
+                        $(v).find('td:last').text('completed');
+                    }
+                });
+                
             });
+            $(this).html('Done');
         });
     });
 </script>
