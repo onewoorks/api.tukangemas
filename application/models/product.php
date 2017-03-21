@@ -235,7 +235,7 @@ class Product_Model extends Common_Model {
         else:
             $whereBerat = '';
         endif;
-        $sql = "SELECT no_siri_Produk, Berat FROM data_database WHERE Dulang $whereDulang AND statusItem=10 $whereBerat";
+        $sql = "SELECT no_siri_Produk, Berat FROM data_database WHERE Dulang $whereDulang AND statusItem=10";
         $this->db->connect();
         $this->db->prepare($sql);
         $this->db->queryexecute();
@@ -243,18 +243,32 @@ class Product_Model extends Common_Model {
     }
 
     public function ReadAllProductByDulangTukangEmas($dulangNo, $object = true) {
-        $whereDulang = (is_array($dulangNo)) ? ' IN (' . implode(',', $dulangNo) . ')' : ' = ' . $dulangNo;
-        $sql = "SELECT CONCAT(p.isbn,p.model) AS no_tag FROM oc_product_to_category c "
-                . " LEFT JOIN oc_product p ON p.product_id = c.product_id"
-                . " WHERE c.category_id $whereDulang ";
-        $this->db->connect();
-        $this->db->prepare($sql);
-        $this->db->queryexecute();
-        return ($object) ? $this->db->fetchOut('array') : count($this->db->fetchOut());
+        $url = 'https://tukangemas.my/api/public/product/' . $dulangNo;
+        $cURL = curl_init();
+        curl_setopt($cURL, CURLOPT_URL, $url);
+        curl_setopt($cURL, CURLOPT_HTTPGET, true);
+        curl_setopt($cURL, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Accept: application/json'
+        ));
+        curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+
+        $results = curl_exec($cURL);
+        curl_close($cURL);
+        $final = array();
+        if ($results != 'false'):
+            $r = json_decode($results);
+            foreach ($r as $k => $v):
+                if ($v->category == $dulangNo):
+                    $final[] = array('no_tag' => $v->isbn . $v->model);
+                endif;
+            endforeach;
+        endif;
+        return ($object) ? $final : count($final);
     }
 
-    public function ReadStokTelahJual() {
-        $sql = "SELECT no_siri_Produk FROM data_database WHERE statusItem=11";
+    public function ReadStokTelahJual($category) {
+        $sql = "SELECT no_siri_Produk FROM data_database WHERE statusItem=11 and Dulang='" . (int) $category . "'";
         $this->db->connect();
         $this->db->prepare($sql);
         $this->db->queryexecute();

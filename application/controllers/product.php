@@ -24,21 +24,61 @@ class Product_Controller extends Common_Controller {
         $ajax = false;
         $page = 'product';
         switch ($case):
-            case 'testsql':
-                $productInfo = $product->ReadStokAda();
-                $this->InsertStatement($productInfo);
-                break;
             case 'statistik':
                 $result = $this->Statistic();
                 break;
+            case 'plain-product':
+                $ajax = true;
+                echo '<pre>';
+                print_r(Product_Controller::DulangTukangEmas(105, true));
+                echo '</pre>';
 
+                break;
+            case 'curl-product':
+                $ajax = true;
+                $url = 'https://tukangemas.my/api/public/product/95';
+                $cURL = curl_init();
+                curl_setopt($cURL, CURLOPT_URL, $url);
+                curl_setopt($cURL, CURLOPT_HTTPGET, true);
+                curl_setopt($cURL, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'Accept: application/json'
+                ));
+                curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+
+                $results = curl_exec($cURL);
+                curl_close($cURL);
+                $final = array();
+                echo '<pre>';
+                print_r(json_decode($results));
+                echo '</pre>';
+                if ($results != 'false'):
+                    $r = json_decode($results);
+                    foreach ($r as $k => $v):
+                        $final[] = array();
+                    endforeach;
+                endif;
+                echo '<pre>';
+                print_r($final);
+                echo '</pre>';
+//                $result['result'] = $results;
+
+                break;
             case 'check-in':
                 $result = $this->CheckIn();
                 break;
             case 'new-product':
                 $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
-                $vars = $this->CheckExtraParams(URL_ARRAY+3, $params);
-                $newProduct = $this->NewProduct($category, $vars); 
+                $vars = $this->CheckExtraParams(URL_ARRAY + 3, $params);
+                $newProduct = $this->NewProduct($category, $vars);
+                $page = $newProduct['page'];
+                $result['category_name'] = ucwords($category);
+                $result['result'] = $newProduct['data'];
+                break;
+            case 'sold-product':
+                $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
+                $vars = $this->CheckExtraParams(URL_ARRAY + 3, $params);
+                $newProduct = $this->SoldProduct($category, $vars);
                 $page = $newProduct['page'];
                 $result['category_name'] = ucwords($category);
                 $result['result'] = $newProduct['data'];
@@ -60,15 +100,6 @@ class Product_Controller extends Common_Controller {
         endif;
     }
 
-    private function RantaiDulangMapping(array $dulangArray) {
-        $mapped = array();
-        $categoryId = 61;
-        foreach ($dulangArray as $dulang):
-            $category = $this->DefineMainCategory($categoryId, $dulang);
-            $mapped[] = $category['sub_category'];
-        endforeach;
-        return $mapped;
-    }
 
     private function StatementSummary(array $categoryArray) {
         $product = new Product_Model();
@@ -157,141 +188,6 @@ class Product_Controller extends Common_Controller {
         return $info;
     }
 
-    private function ReadCountKategoryRantai($indexKategori) {
-        $info = array();
-        foreach ($this->subKategoriRantai as $rantai):
-            $countRantai = $this->CountStatementRantai($rantai);
-//            echo '<pre>';
-//            print_r($countRantai['te_online_product']);
-//            echo '</pre>';
-            $information = $this->ComparePreparedList($countRantai['sankyu_product'], $countRantai['te_online_product']);
-            $new = array();
-            $equal = array();
-            $sold = array();
-
-            foreach ($information['new_product'] as $n):
-                $new[] = $n['no_siri'];
-            endforeach;
-
-            foreach ($information['equal_product'] as $e):
-                $equal[] = $e['no_siri'];
-            endforeach;
-
-            foreach ($information['sold_product'] as $s):
-                $sold[] = $s['no_siri'];
-            endforeach;
-
-            $keyName = strtolower(str_replace(' ', '_', $rantai));
-            $info[$keyName] = array(
-                'sankyu' => array('kategori' => strtoupper($rantai), 'jumlah' => $countRantai['sankyu']),
-                'te_online' => array('kategori' => strtoupper($rantai), 'jumlah' => $countRantai['te_online']),
-                'information' => array(
-                    'equal' => $information['equal'],
-                    'new' => $information['new'],
-                    'sold' => $information['sold']
-                ),
-                'new_product' => $new,
-            );
-            array_push($this->newProduct, $new);
-        endforeach;
-        return $info;
-    }
-
-    private function InsertStatement(array $products) {
-        $productModel = new Product_Model();
-
-        foreach ($products as $productInfo):
-            $category = $this->DefineMainCategory($productInfo['kategori_produk_ID']);
-            $product = array(
-                'model' => $this->NoSiriBaru($productInfo['kod_kategori_Produk'], $productInfo['no_siri_Produk']),
-                'sku' => $productInfo['Dulang'],
-                'ean' => (!$productInfo['Berat'] == '') ? json_encode($this->UpahBarangEmas($productInfo['Upah'], $productInfo['Upah_Jualan'])) : 0,
-                'isbn' => $productInfo['kod_Kategori_Produk'],
-                'jan' => ($productInfo['Berat'] > 0) ? 1 : 0,
-                'mpn' => $category['main_category'],
-                'location' => $productInfo['kod_purity'],
-                'quantity' => 1,
-                'stock_status_id' => 5,
-                'image' => 'catalog/product_online/' . $productInfo['no_siri_Produk'] . '.jpg',
-                'manufacturer_id' => $productInfo['Supplier_ID'],
-                'shipping' => 1,
-                'price' => ($productInfo['Berat'] > 0) ? 0 : $productInfo['Harga_item'],
-                'points' => 0,
-                'tax_class_id' => 0,
-                'date_available' => date('Y-m-d'),
-                'weight' => $productInfo['Berat'],
-                'weight_class_id' => 2,
-                'length' => $productInfo['dimension_Panjang'],
-                'width' => $productInfo['dimension_Panjang'],
-                'height' => $productInfo['dimension_Panjang'],
-                'length_class_id' => 2,
-                'substract' => 1,
-                'minimum' => 1,
-                'sort_order' => 1,
-                'status' => 1,
-                'viewed' => 0,
-                'date_added' => date('Y-m-d h:i:s'),
-                'date_modified' => date('Y-m-d h:i:s'),
-                'user_id' => 1,
-                'ring_size' => $productInfo['dimension_Panjang']
-            );
-            $productId = $productModel->CreateProduct($product);
-            $this->InsertProductDescription($productId, $productInfo);
-            $this->InsertProductToCategory($productId, $this->DefineMainCategory($productInfo['kategori_produk_ID'], $productInfo['Dulang']));
-            $this->InsertProductToStore($productId, 0);
-            $this->InsertProductToLayout($productId, 0, 0);
-        endforeach;
-    }
-
-    private function InsertProductToStore($productId, $storeId) {
-        $productModel = new Product_Model();
-        $productModel->CreateProductToStore($productId, $storeId);
-        return true;
-    }
-
-    private function InsertProductToLayout($productId, $storeId, $layoutId) {
-        $productModel = new Product_Model();
-        $productModel->CreateProductToLayout($productId, $storeId, $layoutId);
-        return true;
-    }
-
-    private function InsertProductDescription($productId, array $productInfo) {
-        $productModel = new Product_Model();
-        for ($i = 0; $i < 2; $i++):
-            $productDescription = array(
-                'product_id' => $productId,
-                'languange_id' => ($i + 1),
-                'name' => ($productInfo['remarks'] == '') ? $productInfo['kategori_Produk'] : $productInfo['remarks'],
-                'description' => ($productInfo['remarks'] == '') ? $productInfo['kategori_Produk'] : $productInfo['remarks'],
-                'meta_title' => ($productInfo['remarks'] == '') ? $productInfo['kategori_Produk'] : $productInfo['remarks'],
-                'meta_description' => ($productInfo['remarks'] == '') ? $productInfo['kategori_Produk'] : $productInfo['remarks'],
-            );
-            $productModel->CreateProductDescription($productDescription);
-        endfor;
-        return true;
-    }
-
-    private function InsertProductToCategory($productId, $categoryId) {
-        $productModel = new Product_Model();
-        $product = array('product_id' => $productId, 'category_id' => $categoryId['sub_category']);
-        $productModel->CreateProductToCategory($product);
-        return true;
-    }
-
-    private function ComparePreparedList($listSankyu, $listTE) {
-        $sankyu = array();
-        $teOnline = array();
-
-        foreach ($listSankyu as $s):
-            $sankyu[] = $s['no_siri'];
-        endforeach;
-
-        foreach ($listTE as $t):
-            $teOnline[] = $t['no_siri'];
-        endforeach;
-        return $this->CompareResult($listSankyu, $listTE);
-    }
-
     private function CompareProduct($kategoriId) {
         $product = new Product_Model();
         $productSankyu = $product->ReadProductByKategori($kategoriId);
@@ -338,23 +234,6 @@ class Product_Controller extends Common_Controller {
         $result['sold_product'] = $sold;
 
         return $result;
-    }
-
-    private function ProductToSyncronize(array $products) {
-        $new = array();
-        $equal = array();
-        $sold = array();
-
-        foreach ($products as $product):
-            $new[] = $product['new'];
-            $equal[] = $product['equal'];
-            $sold[] = $product['sold'];
-        endforeach;
-
-        $productArray = array('new' => $new, 'equal' => $equal, 'sold' => $sold);
-        $allProducts = array_push($this->productToSync, $productArray);
-        $this->productToSync[] = $products;
-        return $products;
     }
 
     private function CleanProductToSync() {
@@ -460,11 +339,15 @@ class Product_Controller extends Common_Controller {
     private function NewProduct($category, $vars = null) {
         $result = false;
         $varsCase = ($vars) ? $vars[0] : false;
-        
+
         switch ($varsCase):
             case 'export':
                 $result['page'] = 'product/new-product-export';
-                $result['data'] = New_Product_Controller::Route($category,true);
+                $result['data'] = New_Product_Controller::Route($category, true);
+                break;
+            case 'export-clean':
+                $result['page'] = 'product/new-product-export-clean';
+                $result['data'] = New_Product_Controller::Route($category, true);
                 break;
             default :
                 $result['page'] = 'product/new-product';
@@ -473,12 +356,37 @@ class Product_Controller extends Common_Controller {
         return $result;
     }
     
-    private function CheckExtraParams($startArray,$paramList){
+    private function SoldProduct($category, $vars = null) {
+        $result = false;
+        $varsCase = ($vars) ? $vars[0] : false;
+
+        switch ($varsCase):
+            case 'export':
+                $result['page'] = 'product/sold-product-export';
+                $result['data'] = Product_Controller::SoldProductItem($category);
+                break;
+            case 'export-clean':
+                $result['page'] = 'product/sold-product-export-clean';
+                $result['data'] = Product_Controller::SoldProductItem($category);
+                break;
+            default :
+                $result['page'] = 'product/sold-product';
+                $result['data'] = Product_Controller::SoldProductItem($category);
+        endswitch;
+        return $result;
+    }
+
+    private function CheckExtraParams($startArray, $paramList) {
         $vars = array();
-        for($i=$startArray;$i<count($paramList);$i++):
+        for ($i = $startArray; $i < count($paramList); $i++):
             $vars[] = $paramList[$i];
         endfor;
         return $vars;
+    }
+    
+    private static function SoldProductItem($category){
+        $productModel = new Product_Model();
+        return $productModel->ReadStokTelahJual($category);
     }
 
 }
