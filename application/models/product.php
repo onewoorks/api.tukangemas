@@ -281,6 +281,7 @@ class Product_Model extends Common_Model {
             'Accept: application/json'
         ));
         curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($cURL, CURLOPT_SSL_VERIFYPEER, false);
 
         $results = curl_exec($cURL);
         curl_close($cURL);

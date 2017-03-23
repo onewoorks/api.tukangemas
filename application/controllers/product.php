@@ -45,6 +45,7 @@ class Product_Controller extends Common_Controller {
                     'Accept: application/json'
                 ));
                 curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($cURL, CURLOPT_RETURNTRANSFER, true);
 
                 $results = curl_exec($cURL);
                 curl_close($cURL);
