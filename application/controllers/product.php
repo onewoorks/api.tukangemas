@@ -78,10 +78,10 @@ class Product_Controller extends Common_Controller {
             case 'sold-product':
                 $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
                 $vars = $this->CheckExtraParams(URL_ARRAY + 3, $params);
-                $newProduct = $this->SoldProduct($category, $vars);
-                $page = $newProduct['page'];
+                $soldProduct = $this->SoldProduct($category, $vars);
+                $page = $soldProduct['page'];
                 $result['category_name'] = ucwords($category);
-                $result['result'] = $newProduct['data'];
+                $result['result'] = $soldProduct['data'];
                 break;
             case 'sync':
                 $ajax = true;
@@ -363,15 +363,15 @@ class Product_Controller extends Common_Controller {
         switch ($varsCase):
             case 'export':
                 $result['page'] = 'product/sold-product-export';
-                $result['data'] = Product_Controller::SoldProductItem($category);
+                $result['data'] = New_Product_Controller::Route($category, true, 'sold_product');
                 break;
             case 'export-clean':
                 $result['page'] = 'product/sold-product-export-clean';
-                $result['data'] = Product_Controller::SoldProductItem($category);
+                $result['data'] = New_Product_Controller::Route($category, true, 'sold_product');
                 break;
             default :
                 $result['page'] = 'product/sold-product';
-                $result['data'] = Product_Controller::SoldProductItem($category);
+                $result['data'] = New_Product_Controller::Route($category, false, 'sold_product');
         endswitch;
         return $result;
     }

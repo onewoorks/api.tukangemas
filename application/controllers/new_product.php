@@ -2,12 +2,12 @@
 
 class New_Product_Controller {
 
-    public static function Route($category, $detailInfo = false) {
-        $detail = self::SubCategory($category, $detailInfo);
+    public static function Route($category, $detailInfo = false, $option = 'new_product') {
+        $detail = self::SubCategory($category, $detailInfo, $option);
         return $detail;
     }
 
-    private static function SubCategory($category, $detailInfo) {
+    private static function SubCategory($category, $detailInfo, $option) {
         $commonModel = new Common_Model();
         $categoryDetail = $commonModel->basicCategory;
         $detail = array();
@@ -16,10 +16,10 @@ class New_Product_Controller {
                 $detail[$key] = $c;
             endforeach;
         endforeach;
-        return self::DulangCompare($detail[$category]['sankyu'], $detail[$category]['tukangemas'], $detailInfo);
+        return self::DulangCompare($detail[$category]['sankyu'], $detail[$category]['tukangemas'], $detailInfo, $option);
     }
 
-    private static function DulangCompare($sk, $te, $detailInfo = false, $option = 'new_product') {
+    private static function DulangCompare($sk, $te, $detailInfo = false, $option= 'new_product') {
         $sankyu = array();
         $tukangemas = array();
         $listSankyu = Product_Controller::DulangSankyu($sk, false, true);
@@ -36,7 +36,15 @@ class New_Product_Controller {
         $listProduct = array();
         foreach ($listNoSiri[$option] as $nosiri):
             $product->noSiri = $nosiri;
-            $productInfo = $product->ReadStokByNoSiri();
+            switch($option):
+                case 'sold_product':
+                    $productInfo = $product->ReadStokByNoSiriPlain();
+                    break;
+                default:
+                    $productInfo = $product->ReadStokByNoSiri();
+                    break;
+            endswitch;
+            
             $upah = $productController->UpahBarangEmas($productInfo['Upah'], $productInfo['Upah_Jualan']);
             $productInfo['upah'] = $upah;
             if (!$detailInfo):

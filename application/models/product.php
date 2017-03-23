@@ -91,7 +91,7 @@ class Product_Model extends Common_Model {
         $this->db->queryexecute();
     }
 
-    public function ReadStokByNoSiri() {
+    public function ReadStokByNoSiri($statusItem = 10) {
         $sql = "SELECT "
                 . "kod_kategori_Produk, "
                 . "no_siri_Produk, "
@@ -112,7 +112,36 @@ class Product_Model extends Common_Model {
                 . "kategori_Produk, "
                 . "kategori_produk_ID, "
                 . "Dulang, "
-                . "no_siri_Produk FROM data_database WHERE statusItem=10 AND no_Siri_Produk='$this->noSiri'";
+                . "no_siri_Produk FROM data_database WHERE statusItem='$statusItem' AND no_Siri_Produk='$this->noSiri'";
+        $this->db->connect();
+        $this->db->prepare($sql);
+        $this->db->queryexecute();
+        $result = $this->db->fetchOut('array');
+        return ($result) ? $result[0] : false;
+    }
+    
+    public function ReadStokByNoSiriPlain() {
+        $sql = "SELECT "
+                . "kod_kategori_Produk, "
+                . "no_siri_Produk, "
+                . "Dulang,"
+                . "Upah,"
+                . "Upah_Jualan,"
+                . "kategori_produk_ID,"
+                . "kod_Purity,"
+                . "dimension_Panjang,"
+                . "dimension_Lebar,"
+                . "dimension_Dia,"
+                . "remarks,"
+                . "kod_Kategori_Produk,"
+                . "Berat,"
+                . "kod_purity,"
+                . "Harga_item,"
+                . "Supplier_ID,"
+                . "kategori_Produk, "
+                . "kategori_produk_ID, "
+                . "Dulang, "
+                . "no_siri_Produk FROM data_database WHERE no_Siri_Produk='$this->noSiri'";
         $this->db->connect();
         $this->db->prepare($sql);
         $this->db->queryexecute();
