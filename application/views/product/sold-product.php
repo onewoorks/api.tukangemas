@@ -10,7 +10,7 @@
 
 <div class='row'>
     <div class='col-sm-12 text-right'>
-        <div class='btn btn-primary' id='btnTransfer'>Transfer</div>
+        <div class='btn btn-primary' id='btnTransfer'>Update</div>
     </div>
 </div>
 <br>
@@ -47,7 +47,7 @@
     $(function(){
         $('#btnTransfer').on('click',function(){
             var url = window.location.href;
-            window.location = url+'/export';
+            window.location = url+'/export-clean';
         });
     });
     </script>
