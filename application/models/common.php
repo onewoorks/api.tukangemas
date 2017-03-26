@@ -26,8 +26,8 @@ class Common_Model {
         'cincin' => array(
             'cincin perak'  => array('sankyu' => 1, 'tukangemas' => 93),
             'cincin emas'   => array('sankyu' => 2, 'tukangemas' => 95),
-            'cincin belah rotan'    => array('sankyu' => 3, 'tukangemas' => 96)
-//            'cincin emas permata'   => array('sankyu' => 3, 'tukangemas' => 107)
+            'cincin belah rotan'    => array('sankyu' => 3, 'tukangemas' => 96),
+            'cincin emas permata'   => array('sankyu' => 16, 'tukangemas' => 107)
         ),
         'gelang' => array('gelang emas' => array('sankyu' => 6, 'tukangemas' => 99))
     );
