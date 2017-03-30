@@ -101,39 +101,6 @@ class Product_Controller extends Common_Controller {
         endif;
     }
 
-
-    private function StatementSummary(array $categoryArray) {
-        $product = new Product_Model();
-        $result = array(
-            'sankyu' => $product->ReadCountRantai($categoryArray),
-            'sankyu_product' => $product->ReadProductByDulang($categoryArray),
-            'te_online' => $product->ReadCountRantaiTE($this->RantaiDulangMapping($categoryArray)),
-            'te_online_product' => $product->ReadRantaiTE($this->RantaiDulangMapping($categoryArray)));
-        return $result;
-    }
-
-    private function CountStatementRantai($rantai) {
-        $result = array();
-        switch ($rantai):
-            case 'rantai kaki':
-                $result = $this->StatementSummary($this->rantaiKaki);
-                break;
-            case 'rantai leher':
-                $result = $this->StatementSummary($this->rantaiLeher);
-                break;
-            case 'rantai padu':
-                $result = $this->StatementSummary($this->rantaiPadu);
-                break;
-            case 'rantai tangan kosong':
-                $result = $this->StatementSummary($this->rantaiTanganKosong);
-                break;
-            case'rantai tangan fesyen':
-                $result = $this->StatementSummary($this->rantaiTanganFesyen);
-                break;
-        endswitch;
-        return $result;
-    }
-
     private function Statistic($backCall = false) {
         $product = new Product_Model();
         $categories = $product->SenaraiKategori();
