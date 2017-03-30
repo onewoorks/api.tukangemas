@@ -55,7 +55,7 @@ class New_Product_Controller {
                     'upah_normal' => Format::Currency($upah['normal']),
                     'upah_member' => Format::Currency($upah['member']),
                     'upah_dealer' => Format::Currency($upah['dealer']),
-                    'harga' => ($productInfo['Harga_item']) ? Format::Currency($productInfo['Harga_item']) : ''
+                    'harga' => ($productInfo['receiving_Status'] == 0 ) ? Format::Currency($productInfo['Harga_item']) : Format::Currency($productInfo['code_Supplier'])
                 );
             else:
                 $productInfo['category'] = $te;
