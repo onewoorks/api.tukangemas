@@ -8,7 +8,7 @@
     <li class='active'>New Product</li>
 </ol>
 
-<div class='row'>
+<div class='row hidden'>
     <div class='col-sm-12 text-right'>
         <div class='btn btn-primary' id='btnTransfer'>Transfer</div>
     </div>
