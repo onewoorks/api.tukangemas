@@ -27,7 +27,7 @@ class Product_Model extends Common_Model {
                 . "Harga_item,"
                 . "Supplier_ID,"
                 . "kategori_Produk, "
-                . "kategori_produk_ID, "
+                . "kategori_produk_ID, code_Supplier, receiving_Status, "
                 . "Dulang, "
                 . "no_siri_Produk FROM data_database WHERE statusItem='$statusItem' AND no_Siri_Produk='$this->noSiri'";
         $this->db->connect();
