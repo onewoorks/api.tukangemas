@@ -8,12 +8,6 @@ class Product_Controller extends Common_Controller {
         
     }
 
-    private $rantaiKaki = array(4);
-    private $rantaiLeher = array(8);
-    private $rantaiPadu = array(9);
-    private $rantaiTanganKosong = array(10);
-    private $rantaiTanganFesyen = array(11, 12, 13, 14);
-    private $productToSync = array();
     private $newProduct = array();
 
     public function main(array $getVars, array $params = null, $request = null) {
