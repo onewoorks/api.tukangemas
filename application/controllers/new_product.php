@@ -99,7 +99,7 @@ class New_Product_Controller {
                     'user_id' => 1,
                     'remarks' => $productInfo['remarks'],
                     'kategori_Produk' => $productInfo['kategori_Produk'],
-                    'ring_size' => $productInfo['dimension_Size']);
+                    'ring_size' => $productInfo['dimension_Saiz']);
         return $result;
     }
 
