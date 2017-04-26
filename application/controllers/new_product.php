@@ -39,7 +39,7 @@ class New_Product_Controller {
             switch($option):
                 case 'sold_product':
 //                    $productInfo = $product->ReadStokByNoSiriPlain();
-                      $listProduct[] = $product->noSiri;
+                      $listProduct[]['model'] = $product->noSiri;
                     break;
                 default:
                     $productInfo = $product->ReadStokByNoSiri();
