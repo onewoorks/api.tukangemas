@@ -39,7 +39,7 @@ class New_Product_Controller {
             switch($option):
                 case 'sold_product':
 //                    $productInfo = $product->ReadStokByNoSiriPlain();
-                      $productInfo = $product->noSiri;
+                      $listProduct[] = $product->noSiri;
                     break;
                 default:
                     $productInfo = $product->ReadStokByNoSiri();
@@ -49,7 +49,7 @@ class New_Product_Controller {
             if($option!='sold_product'):
             $upah = $productController->UpahBarangEmas($productInfo['Upah'], $productInfo['Upah_Jualan']);
             $productInfo['upah'] = $upah;
-            endif;
+            
             if (!$detailInfo):
                 $listProduct[] = array(
                     'no_siri_Produk' => $productInfo['no_siri_Produk'],
@@ -63,6 +63,7 @@ class New_Product_Controller {
             else:
                 $productInfo['category'] = $te;
                 $listProduct[] = self::DetailProductInfo($productInfo);
+            endif;
             endif;
         endforeach;
         return $listProduct;
