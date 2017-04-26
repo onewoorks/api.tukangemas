@@ -249,16 +249,20 @@ class Product_Controller extends Common_Controller {
     private function SyncProcessing() {
         $this->Statistic(true);
         $product = $this->CleanProductToSync();
-        $newProduct = $product['new'];
-        $insertStatement = array();
-        $productModel = new Product_Model();
-
-        foreach ($newProduct as $new):
-            $productModel->noSiri = $new;
-            $sankyuProduct = $productModel->ReadStokByNoSiri();
-            $this->InsertStatement($sankyuProduct);
-//            print_r($sankyuProduct);
-        endforeach;
+        echo '<pre>';
+        print_r($product);
+        echo '</pre>';
+//        $newProduct = $product['new'];
+        
+//        $insertStatement = array();
+//        $productModel = new Product_Model();
+//
+//        foreach ($newProduct as $new):
+//            $productModel->noSiri = $new;
+//            $sankyuProduct = $productModel->ReadStokByNoSiri();
+//            $this->InsertStatement($sankyuProduct);
+////            print_r($sankyuProduct);
+//        endforeach;
     }
 
     public static function DulangSankyu($dulangNo, $berat = false, $object = false) {
