@@ -74,6 +74,7 @@ class Product_Controller extends Common_Controller {
                 $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
                 $vars = $this->CheckExtraParams(URL_ARRAY + 3, $params);
                 $soldProduct = $this->SoldProduct($category, $vars);
+                print_r($soldProduct);
                 $page = $soldProduct['page'];
                 $result['category_name'] = ucwords($category);
                 $result['result'] = $soldProduct['data'];
@@ -249,20 +250,16 @@ class Product_Controller extends Common_Controller {
     private function SyncProcessing() {
         $this->Statistic(true);
         $product = $this->CleanProductToSync();
-        echo '<pre>';
-        print_r($product);
-        echo '</pre>';
-//        $newProduct = $product['new'];
-        
-//        $insertStatement = array();
-//        $productModel = new Product_Model();
-//
-//        foreach ($newProduct as $new):
-//            $productModel->noSiri = $new;
-//            $sankyuProduct = $productModel->ReadStokByNoSiri();
-//            $this->InsertStatement($sankyuProduct);
-////            print_r($sankyuProduct);
-//        endforeach;
+        $newProduct = $product['new'];
+        $insertStatement = array();
+        $productModel = new Product_Model();
+
+        foreach ($newProduct as $new):
+            $productModel->noSiri = $new;
+            $sankyuProduct = $productModel->ReadStokByNoSiri();
+            $this->InsertStatement($sankyuProduct);
+//            print_r($sankyuProduct);
+        endforeach;
     }
 
     public static function DulangSankyu($dulangNo, $berat = false, $object = false) {
