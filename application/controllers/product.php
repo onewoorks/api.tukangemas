@@ -74,7 +74,6 @@ class Product_Controller extends Common_Controller {
                 $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
                 $vars = $this->CheckExtraParams(URL_ARRAY + 3, $params);
                 $soldProduct = $this->SoldProduct($category, $vars);
-                print_r($soldProduct);
                 $page = $soldProduct['page'];
                 $result['category_name'] = ucwords($category);
                 $result['result'] = $soldProduct['data'];
