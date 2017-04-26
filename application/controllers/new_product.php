@@ -46,8 +46,10 @@ class New_Product_Controller {
                     break;
             endswitch;
             
+            if($option!='sold_product'):
             $upah = $productController->UpahBarangEmas($productInfo['Upah'], $productInfo['Upah_Jualan']);
             $productInfo['upah'] = $upah;
+            endif;
             if (!$detailInfo):
                 $listProduct[] = array(
                     'no_siri_Produk' => $productInfo['no_siri_Produk'],
