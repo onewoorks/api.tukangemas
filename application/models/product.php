@@ -59,7 +59,7 @@ class Product_Model extends Common_Model {
                 . "Supplier_ID,"
                 . "kategori_Produk, "
                 . "kategori_produk_ID, "
-                . "Dulang, , code_Supplier, receiving_Status, "
+                . "Dulang, code_Supplier, receiving_Status, "
                 . "no_siri_Produk FROM data_database WHERE no_Siri_Produk='$this->noSiri'";
         echo $sql;
         $this->db->connect();
