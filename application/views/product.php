@@ -89,7 +89,7 @@ $products = array();
     }
 
     function UpdateSold(v) {
-        console.log(v);
+        console.log($(v).data('subcategory'));
         $.ajax({
             url: 'http://localhost/api.tukangemas/product/sold-product/' + $(v).data('subcategory') + '/export-clean',
             success: function () {
