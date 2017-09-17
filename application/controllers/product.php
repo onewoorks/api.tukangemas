@@ -216,7 +216,7 @@ class Product_Controller extends Common_Controller {
 
         if ($modalUpah >= 0 and $modalUpah <= 30):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + ($member > 0) ? 15 : 0;
+            $dealer = $modalUpah + (($member > 0) ? 15 : 0);
         elseif ($modalUpah > 30 and $modalUpah <= 60):
             $member = $upahJualan - (($upahJualan * 25) / 100);
             $dealer = $modalUpah + 25;
