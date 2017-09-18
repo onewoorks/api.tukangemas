@@ -221,5 +221,13 @@ class Product_Model extends Common_Model {
         $this->db->queryexecute();
         return $this->db->fetchOut('array');
     }
-
+    
+    public function getUpah(){
+        $sql = "select no_siri_produk, upah as modal_upah, Upah_Jualan as upah_jualan from data_database where statusItem = 10";
+        $this->db->connect();
+        $this->db->prepare($sql);
+        $this->db->queryexecute();
+        return $this->db->fetchOut('array');
+    }
+    
 }
