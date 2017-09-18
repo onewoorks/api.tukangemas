@@ -118,10 +118,12 @@ $products = array();
         });
         
         $('#updateupah').click(function(){
+           $(this).text('Processing');
            $.ajax({
                url: 'http://localhost/api.tukangemas/product/update-modal-upah',
                success: function(data){
                    alert('update completed! please check!');
+                   $(this).text('Completed');
                }
            }) 
         });
