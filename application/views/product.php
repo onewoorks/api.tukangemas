@@ -30,6 +30,7 @@ $products = array();
         </tr>
     </thead>
     <tbody>
+        <?php if(isset($result)):?>
         <?php foreach ($result as $k => $info): ?>
             <?php foreach ($info as $subCat => $dulang): ?>
                 <tr data-subcategory='<?= str_replace(' ', '-', $subCat); ?>'>
@@ -62,6 +63,9 @@ $products = array();
     <?php endforeach;
     ?>
 <?php endforeach; ?>
+                    <?php else:?>
+                <tr><td colspan="8"><i>No Products()</i></td></tr>
+                <?php endif;?>
     </tbody>
     <tfoot>
     <th colspan="3" class='text-right'>Sum</th>
@@ -75,7 +79,8 @@ $products = array();
 
 
 <div class='text-right'>
-    <div id='synchronize' class='btn btn-primary'>Synchronize</div>
+    <div id='updateupah' class='btn btn-default'>Synchronize Latest Labour</div>
+    <div id='synchronize' class='btn btn-primary'>Synchronize Product</div>
 </div>
 
 <script>
@@ -110,6 +115,15 @@ $products = array();
                 $('#synchronize').removeClass('btn-primary');
                 $('#synchronize').addClass('btn-default disabled');
             });
+        });
+        
+        $('#updateupah').click(function(){
+           $.ajax({
+               url: 'http://localhost/api.tukangemas/product/update-modal-upah',
+               success: function(data){
+                   alert('update completed! please check!');
+               }
+           }) 
         });
     });
 </script>
