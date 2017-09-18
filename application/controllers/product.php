@@ -11,7 +11,6 @@ class Product_Controller extends Common_Controller {
     private $newProduct = array();
 
     public function main(array $getVars, array $params = null, $request = null) {
-        print_r($request);
         $product = new Product_Model();
         $case = $params[URL_ARRAY + 1];
         $result = array();
@@ -62,6 +61,10 @@ class Product_Controller extends Common_Controller {
             case 'check-in':
                 $result = $this->CheckIn();
                 break;
+            case 'update-modal-upah':
+                $ajax = true;
+                $result = $this->UpdateModalUpah();
+                break;
             case 'new-product':
                 $category = str_replace('-', ' ', $params[URL_ARRAY + 2]);
                 $vars = $this->CheckExtraParams(URL_ARRAY + 3, $params);
@@ -82,6 +85,8 @@ class Product_Controller extends Common_Controller {
                 $ajax = true;
                 $this->SyncProcessing();
                 break;
+            case 'empty':
+                $result = array();
             default:
                 $result['stocks'] = $product->ReadStokAda();
                 break;
@@ -231,17 +236,17 @@ class Product_Controller extends Common_Controller {
             $dealer = $modalUpah + 45;
         elseif ($modalUpah > 150 and $modalUpah <= 300):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 50;
+             $dealer = $modalUpah + 50;
         elseif ($modalUpah > 300):
             $member = $upahJualan - (($upahJualan * 25) / 100);
             $dealer = $modalUpah + 70;
         endif;
 
         $upah = array(
-            "normal" => $normal,
-            "member" => $member,
-            "dealer" => $dealer,
-            "modal" => $modalUpah
+            "normal" => number_format($normal+0,2),
+            "member" => number_format($member+0,2),
+            "dealer" => number_format($dealer+0,2),
+            "modal" => number_format($modalUpah+0,2)
         );
         return $upah;
     }
@@ -350,5 +355,30 @@ class Product_Controller extends Common_Controller {
         $productModel = new Product_Model();
         return $productModel->ReadStokTelahJual($category);
     }
+    
+    private function UpdateModalUpah(){
+        $products = New Product_Model();
+        $items = $products->getUpah();
+        $latestUpah = array();
+        foreach($items as $item):
+            $upahterkini = $this->UpahBarangEmas($item['modal_upah'], $item['upah_jualan']);
+            $latestUpah[] = array('no_siri_produk'=> $item['no_siri_produk'],'upah'=>$upahterkini);
+        endforeach;
+       
+        $data_string = json_encode($latestUpah);                                                                                   
+                        
+        $ch = curl_init('https://tukangemas.my/api/public/product/update-upah');                                                                      
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+            'Content-Type: application/json',                                                                                
+            'Content-Length: ' . strlen($data_string))                                                                       
+        );   
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        curl_close($ch);
+    }
+    
 
 }
