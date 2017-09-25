@@ -243,10 +243,10 @@ class Product_Controller extends Common_Controller {
         endif;
 
         $upah = array(
-            "normal" => number_format($normal+0,2),
-            "member" => number_format($member+0,2),
-            "dealer" => number_format($dealer+0,2),
-            "modal" => number_format($modalUpah+0,2)
+            "normal" => number_format($normal+0,2,'.',''),
+            "member" => number_format($member+0,2,'.',''),
+            "dealer" => number_format($dealer+0,2,'.',''),
+            "modal" => number_format($modalUpah+0,2,'.','')
         );
         return $upah;
     }
