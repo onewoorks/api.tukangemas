@@ -221,25 +221,32 @@ class Product_Controller extends Common_Controller {
 
         if ($modalUpah >= 0 and $modalUpah <= 30):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + (($member > 0) ? 15 : 0);
+//            $dealer = $modalUpah + (($member > 0) ? 15 : 0);
+        $dealer = $modalUpah + (($member > 0) ? 25 : 0);
         elseif ($modalUpah > 30 and $modalUpah <= 60):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 25;
+//            $dealer = $modalUpah + 25;
+        $dealer = $modalUpah + 40;
         elseif ($modalUpah > 60 and $modalUpah <= 80):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 30;
+//            $dealer = $modalUpah + 30;
+        $dealer = $modalUpah + 50;
         elseif ($modalUpah > 80 and $modalUpah <= 100):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 40;
+//            $dealer = $modalUpah + 40;
+        $dealer = $modalUpah + 65;
         elseif ($modalUpah > 100 and $modalUpah <= 150):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 45;
+//            $dealer = $modalUpah + 45;
+        $dealer = $modalUpah + 80;
         elseif ($modalUpah > 150 and $modalUpah <= 300):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-             $dealer = $modalUpah + 50;
+//             $dealer = $modalUpah + 50;
+        $dealer = $modalUpah + 100;
         elseif ($modalUpah > 300):
             $member = $upahJualan - (($upahJualan * 25) / 100);
-            $dealer = $modalUpah + 70;
+//            $dealer = $modalUpah + 70;
+        $dealer = $modalUpah + 150;
         endif;
 
         $upah = array(
