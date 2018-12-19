@@ -123,7 +123,7 @@ $products = array();
                url: 'http://localhost/api.tukangemas/product/update-modal-upah',
                success: function(data){
                   
-                   $(this).text('Completed');
+                   $('#updateupah').text('Completed');
                     alert('update completed! please check!');
                }
            }) 
