@@ -37,7 +37,7 @@ class Product_Model extends Common_Model {
         $result = $this->db->fetchOut('array');
         return ($result) ? $result[0] : false;
     }
-    
+
     public function ReadStokByNoSiriPlain() {
         $sql = "SELECT "
                 . "kod_kategori_Produk, "
@@ -95,7 +95,6 @@ class Product_Model extends Common_Model {
         return $result[0]['jumlah'];
     }
 
-
     public function ReadProductByKategori($kategoriId) {
         $sql = "SELECT no_siri_Produk as no_siri"
                 . " FROM data_database "
@@ -121,7 +120,6 @@ class Product_Model extends Common_Model {
         $result = $this->db->fetchOut('array');
         return $result;
     }
-
 
     public function ReadAllProduct() {
         $sql = "SELECT no_siri_Produk FROM data_database";
@@ -159,14 +157,17 @@ class Product_Model extends Common_Model {
 
         $results = curl_exec($cURL);
         curl_close($cURL);
+
         $final = array();
         if ($results != 'false'):
-            $r = json_decode($results);
-            foreach ($r as $k => $v):
-                if ($v->category == $dulangNo):
-                    $final[] = array('no_tag' => $v->isbn . $v->model);
-                endif;
-            endforeach;
+            if (is_array($results) || is_object($results)):
+                $r = json_decode($results);
+                foreach ($r as $k => $v):
+                    if ($v->category == $dulangNo):
+                        $final[] = array('no_tag' => $v->isbn . $v->model);
+                    endif;
+                endforeach;
+            endif;
         endif;
         return ($object) ? $final : count($final);
     }
@@ -221,13 +222,13 @@ class Product_Model extends Common_Model {
         $this->db->queryexecute();
         return $this->db->fetchOut('array');
     }
-    
-    public function getUpah(){
+
+    public function getUpah() {
         $sql = "select no_siri_produk, upah as modal_upah, Upah_Jualan as upah_jualan from data_database where statusItem = 10";
         $this->db->connect();
         $this->db->prepare($sql);
         $this->db->queryexecute();
         return $this->db->fetchOut('array');
     }
-    
+
 }
