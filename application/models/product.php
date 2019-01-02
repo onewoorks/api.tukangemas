@@ -160,8 +160,8 @@ class Product_Model extends Common_Model {
 
         $final = array();
         if ($results != 'false'):
-            if (is_array($results) || is_object($results)):
-                $r = json_decode($results);
+            $r = json_decode($results);
+            if (count($r) > 0):
                 foreach ($r as $k => $v):
                     if ($v->category == $dulangNo):
                         $final[] = array('no_tag' => $v->isbn . $v->model);
