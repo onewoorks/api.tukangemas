@@ -30,13 +30,15 @@ $products = array();
         </tr>
     </thead>
     <tbody>
-        <?php if(isset($result)):?>
-        <?php foreach ($result as $k => $info): ?>
+        <?php if(isset($data['content']['result'])):?>
+        <?php foreach ($data['content']['result'] as $k => $info): ?>
             <?php foreach ($info as $subCat => $dulang): ?>
                 <tr data-subcategory='<?= str_replace(' ', '-', $subCat); ?>'>
                     <td><?= strtoupper($k); ?></td>
                     <td><?= strtoupper($subCat); ?></td>
-                    <td class="text-center"><?= is_array($dulang['sankyu']) ? implode(',', $dulang['sankyu']) : $dulang['sankyu']; ?></td>
+                    <td class="text-center">
+                    <?= is_array($dulang['sankyu']) ? implode(',', $dulang['sankyu']) : $dulang['sankyu']; ?>
+                    </td>
                     <?php $productInfo = Product_Controller::DulangEqual($dulang['sankyu'], $dulang['tukangemas']); ?>
                     <td class='text-center'><?=
                         Product_Controller::DulangSankyu($dulang['sankyu']);
